@@ -34,32 +34,37 @@ frequency=monthly&data[0]=price&facets[stateid][]=AK&facets[stateid][]\
 =WY&start=2010-01&sort[0][column]=period&sort[0][direction]\
 =desc&api_key="""+key
 
+
 response = requests.get(url, headers={'Content-Type': 'application/json'})
-print(response.status_code)
+if response.status_code == 200:
+    print('\nSuccesfully conected to https://api.eia.gov/\n')
+    try:
+        data_temp1 = json.loads(response.content.decode('utf-8'))
+        data_temp2 = data_temp1['response']['data']
+        #should return the following columns: preriod, stateid, stateDescription, sectorid, sectorName, price and price-units
+        headers = list(data_temp2[0].keys())
+        df_price = pd.DataFrame(columns=headers)
+        #insert each new row to the df_price data frame
+        for i in range(len(data_temp2)):
+            df_price = pd.concat([df_price,pd.DataFrame(data_temp2[i],index=[i])])
+    except:
+        print('\nNo data found\n')
 
-data_temp1 = json.loads(response.content.decode('utf-8'))
-data_temp2 = data_temp1['response']['data']
-headers = list(data_temp2[0].keys())
-df_price = pd.DataFrame(columns=headers)
+# print(df_price.head())
+# print('')
+# print(df_price.describe())
+# print('')
+# print(df_price['sectorName'].unique())
+# print('')
+# print(df_price['sectorid'].unique())
+# print('')
+# print(df_price['stateDescription'].unique())
+# print('')
+# print(df_price['period'].unique())
 
-for i in range(len(data_temp2)):
-    df_price = pd.concat([df_price,pd.DataFrame(data_temp2[i],index=[i])])
+# print(df_price.head().to_string)
 
-print(df_price.head())
-print('')
-print(df_price.describe())
-print('')
-print(df_price['sectorName'].unique())
-print('')
-print(df_price['sectorid'].unique())
-print('')
-print(df_price['stateDescription'].unique())
-print('')
-print(df_price['period'].unique())
-
-print(df_price.head().to_string)
-
-
+#get the the prices for the residential sector
 df_price_res = df_price[df_price['sectorName'] == 'residential']
 
 states = set(['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', \
@@ -71,11 +76,13 @@ states = set(['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', \
               'WV', 'WI', 'WY'])
     
 df_price_res = df_price_res[df_price_res['stateid'].apply(lambda x: x in states)]
-print(df_price_res)
+# print(df_price_res)
 
 df_price_res['month'] = pd.to_datetime(df_price_res['period']).dt.month
 df_price_pivot = pd.pivot_table(df_price_res, values = 'price', index = 'month', 
                                 columns = 'stateid', aggfunc = 'mean') 
 
-print(df_price_pivot)
-df_price_pivot.to_csv('monthly_avg_prices_bystate.csv')
+# print(df_price_pivot)
+#export csv to input_data directory
+df_price_pivot.to_csv('input_data/monthly_avg_prices_bystate.csv')
+print('\nThe average prices by state and month can be found in input_data/monthly_avg_prices_bystate.csv\n')
