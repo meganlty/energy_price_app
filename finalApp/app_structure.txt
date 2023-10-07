@@ -1,0 +1,38 @@
+finalApp/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── electricity_estimation_functions.py
+│   ├── co2_emissions.py
+│   ├── energy_consumption.py
+│   ├── vehicle_scraping.py
+│   ├── electricity_prices.py
+│   │
+│   │
+│   │
+│   ├── input_data/
+│   │   ├── __init__.py
+│   │   ├── monthly_avg_proces_bystate.csv
+│   │   ├── averages_per_climate_zone.csv
+│   │   ├── energy_consumption_by_ev.csv
+│   │   ├── zipcode_by_state.csv
+│   │   ├── climate_zone_by_state.csv
+│   │   └── co2_emissions.csv
+│   │
+│   │
+│   │
+│   ├── output_data/
+│   │   ├── monthlyCO2.csv
+│   │   ├── monthlyElecCost.csv
+│   │   └── climate_zone.csv
+│   │
+│   └── webapp/
+│       ├── __init__.py
+│       └── ElecCO2Est.py
+│       
+│       
+│
+├── requirements.txt
+└── README.md
+
