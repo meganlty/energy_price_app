@@ -15,7 +15,6 @@ import numpy as np
 # is the most share of electricity use. This also means that we only have to 
 # clean 7 sets of tables, instead of 50 sets, and assign states to each of the climates. 
 
-# Lets build quick scraper to download CSV because I am  *lazy*
 
 # Each file includes the summed energy consumption for all buildings of the
 # specified type in the geography of interest by 15-minute timestep.
@@ -37,10 +36,10 @@ csv_list = []
 for i in files:
     csv_list.append(i.text)
     
-# Gonna get rid of mobile homes because we don't need it
+# We do not need mobile homes
 csv_list_2 = [x for x in csv_list if 'mobile' not in x]
 
-#Alright let's download and clean these files
+#Download and clean files
 column_names = ['cm24', 'cm5', 'csa', 'csd',\
                 'hdm24', 'hdm5', 'hdsa', 'hdsd',\
                 'hhm24', 'hhm5', 'hhsa', 'hhsd',\
@@ -60,6 +59,8 @@ for i in range(len(csv_list_2)):
     monthly_sums = pd.pivot_table(temp2, values = 'kwhperunit', index = 'month', aggfunc = "sum")
     all_monthly_sums.append(monthly_sums)
 
+# Write files to final 
 final = pd.concat(all_monthly_sums, axis = 1)
 final.columns = column_names
 print(final)
+final.to_csv('input_data/averages_per_climate_zone.csv')

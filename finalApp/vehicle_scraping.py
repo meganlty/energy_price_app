@@ -43,6 +43,9 @@ ev_con_df['brand'] =  ev_con_df['model'].str.extract(pat)
 top10_brands = set(['Tesla', 'Ford', 'Chevrolet', 'Volkswagen',\
                 'Nissan', 'Audi', 'Porsche', 'Hyundai'])
 
+# Add empty dataframe
+#no_ev = pd.DataFrame({'model': ['No EV'], 'wh/km': [0]})
 ev_con_df_sim = ev_con_df[ev_con_df['brand'].isin(top10_brands)].reset_index(drop=True)
 ev_con_summary = pd.pivot_table(ev_con_df_sim, values = 'wh/km', index = 'brand', aggfunc = "mean")
-ev_con_summary.to_csv('energy_consumption_by_ev.csv')
+ev_con_summary.loc['No EV'] = 0
+ev_con_summary.to_csv('input_data/energy_consumption_by_ev.csv')
