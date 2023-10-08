@@ -83,7 +83,7 @@ def get_final(state, carModel, monthlyMileage, house,cons_level):
     # Get basic information
     level=get_use_level(cons_level)
     prices = df_price.loc[:,state]*0.01*level #for cents to dollars
-    emissions = df_emission.loc[state, 'CO2']*1000*level #MWh to kWh
+    emissions = df_emission.loc[state, 'CO2']*0.001*level #MWh to kWh
     df_monthly_em = pd.DataFrame({'co2_in':[emissions for i in range(12)]})
     df_monthly_em.index =range(1, len(df_monthly_em)+1)
     
