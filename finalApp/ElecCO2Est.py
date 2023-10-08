@@ -59,6 +59,7 @@ with st.container():
             "e.g. I always turn lights off when leave",
             key="energySaver",
             options=["Rarely", "Sometimes", "Always"],
+            index=1
         )
        
 st.markdown("""---""")
@@ -66,7 +67,7 @@ st.markdown("""---""")
 if st.button("Calculate"):
 
     # Run function to calculate 
-    root_fct.get_final(state_dropdown,carModel_dropdown,int(monthlyMileage_input),homeType_dropdown)
+    root_fct.get_final(state_dropdown,carModel_dropdown,int(monthlyMileage_input),homeType_dropdown,energySaver_select)
 
     userProfileHeader='<h3 style="font-size:20px;">👾 Entered Information</h3>'
     st.markdown(userProfileHeader, unsafe_allow_html=True)
@@ -163,7 +164,7 @@ if st.button("Calculate"):
     # Customize the chart layout
     fig.update_layout(
         xaxis_title='Month',
-        yaxis_title='CO2 Emissions',
+        yaxis_title='CO2 Emissions in tons',
         showlegend=False,  # Hide legend
         title='CO2 Emissions by Month'
     )

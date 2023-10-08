@@ -47,12 +47,12 @@ def get_hh_abb(hh_input):
     hh_abbrev = dict_hh_abbrev[hh_input]
     return hh_abbrev
 
-def get_use_type(use_input):
-    dict_use = {"Rarely" : 'h', 
-                "Sometimes": 'm', 
-                "Always": 'l'}
-    use_abbrev = dict_use[use_input]
-    return use_abbrev 
+def get_use_level(use_input):
+    dict_use = {"Rarely" : 1.2, 
+                "Sometimes": 1, 
+                "Always": 0.8}
+    user_level = dict_use[use_input]
+    return user_level 
 
 def get_load(state, carModel, monthlyMileage, house):
     dict_states = get_mappings()
@@ -79,10 +79,11 @@ def get_load(state, carModel, monthlyMileage, house):
     df_ev_load.index =range(1, len(df_ev_load)+1)
     return df_avg_cz, df_ev_load
     
-def get_final(state, carModel, monthlyMileage, house):
+def get_final(state, carModel, monthlyMileage, house,cons_level):
     # Get basic information
-    prices = df_price.loc[:,state]*0.01 #for cents to dollars
-    emissions = df_emission.loc[state, 'CO2']*1000 #MWh to kWh
+    level=get_use_level(cons_level)
+    prices = df_price.loc[:,state]*0.01*level #for cents to dollars
+    emissions = df_emission.loc[state, 'CO2']*1000*level #MWh to kWh
     df_monthly_em = pd.DataFrame({'co2_in':[emissions for i in range(12)]})
     df_monthly_em.index =range(1, len(df_monthly_em)+1)
     
@@ -94,7 +95,7 @@ def get_final(state, carModel, monthlyMileage, house):
     df_all.columns = ['prices', 'load', 'ev_load', 'co2_in']
 
     df_all['Elec Costs'] = df_all['prices'] * (df_all['load']+df_all['ev_load'])
-    df_all['Emission'] = df_all['co2_in'] * (df_all['load']+df_all['ev_load'])
+    df_all['Emission'] = df_all['co2_in'] * (df_all['load']+df_all['ev_load'])*0.0005 # lb to ton
 
     months = ['January', 'February', 'March', 'April', 'May', 
               'June', 'July', 'August', 'September', 'October', 
