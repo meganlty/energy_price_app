@@ -3,7 +3,6 @@
 """
 Created on Wed Oct  4 21:22:27 2023
 
-
 """
 import pandas as pd
 
@@ -18,6 +17,10 @@ df_price = pd.read_csv('input_data/monthly_avg_prices_bystate.csv', index_col=0)
 df_load = pd.read_csv('input_data/averages_per_climate_zone.csv', index_col=0)
 df_ev = pd.read_csv('input_data/energy_consumption_by_ev.csv', index_col=0)
 df_emission = pd.read_csv('input_data/co2_emission_rates_data.csv', index_col=1)
+
+def get_statelist():
+    states = pd.read_excel('input_data/state_climate_zone.xlsx')["state"]
+    return states
 
 def get_mappings():
     cz_abbrev = {'Cold': 'c',
@@ -67,14 +70,16 @@ def get_load(state, carModel, monthlyMileage, house):
     df_all_cz = pd.concat(df_cz, axis = 1)
     df_avg_cz = df_all_cz.mean(axis=1)
     
-    #G et EV consumption for every month
-    ev = (df_ev.loc[carModel].values[0]*0.001)*monthlyMileage #to get in kW
+    #Get EV consumption for every month
+    if carModel == None:
+        ev=0
+    else:
+        ev = (df_ev.loc[carModel].values[0]*0.001)*monthlyMileage #to get in kW
     df_ev_load = pd.DataFrame({'ev_load':[ev for i in range(12)]})
     df_ev_load.index =range(1, len(df_ev_load)+1)
-    
     return df_avg_cz, df_ev_load
     
-def main():
+def get_final(state, carModel, monthlyMileage, house):
     # Get basic information
     prices = df_price.loc[:,state]*0.01 #for cents to dollars
     emissions = df_emission.loc[state, 'CO2']*1000 #MWh to kWh
@@ -88,23 +93,19 @@ def main():
     df_all = pd.concat([prices, df_avg_cz, df_ev_load, df_monthly_em], axis =1)
     df_all.columns = ['prices', 'load', 'ev_load', 'co2_in']
 
-    df_all['monthly_price'] = df_all['prices'] * (df_all['load']+df_all['ev_load'])
-    df_all['monthly_emissions'] = df_all['co2_in'] * (df_all['load']+df_all['ev_load'])
+    df_all['Elec Costs'] = df_all['prices'] * (df_all['load']+df_all['ev_load'])
+    df_all['Emission'] = df_all['co2_in'] * (df_all['load']+df_all['ev_load'])
 
     months = ['January', 'February', 'March', 'April', 'May', 
               'June', 'July', 'August', 'September', 'October', 
               'November', 'December']
 
-    df_final_price = df_all['monthly_price']
+    df_final_price = df_all['Elec Costs']
     df_final_price.index = months
     df_final_price.to_csv('output_data/monthlyElecCost.csv') 
 
-    df_final_em = df_all['monthly_emissions']
+    df_final_em = df_all['Emission']
     df_final_em.index = months
     df_final_em.to_csv('output_data/monthlyCO2.csv')
     return 
-
-if __name__ == "__main__":
-    main()
-
 
