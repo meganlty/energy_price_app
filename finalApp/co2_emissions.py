@@ -15,4 +15,4 @@ print('\nThe average emission rates (lb/MWh) by state can be found in input_data
 #4. State Resource Mix (eGRID2021)
 resourcesEnergyMix = pd.read_excel('input_data/eGRID2021_summary_tables.xlsx',sheet_name = 'Table 4', skiprows=2 , usecols='B:O', skipfooter=2)
 resourcesEnergyMix.rename(columns={'Unnamed: 1':'State','Unnamed: 2':'Nameplate Capacity','Unnamed: 3':'Net Generation'},inplace=True)
-
+resourcesEnergyMix.to_csv('input_data/resourcesEnergyMix.csv')

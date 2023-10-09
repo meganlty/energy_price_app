@@ -5,11 +5,57 @@ Created on Wed Oct  4 21:22:27 2023
 
 """
 import pandas as pd
+import numpy as np
+import plotly.express as px
 
 df_price = pd.read_csv('input_data/monthly_avg_prices_bystate.csv', index_col=0)
 df_load = pd.read_csv('input_data/averages_per_climate_zone.csv', index_col=0)
 df_ev = pd.read_csv('input_data/energy_consumption_by_ev.csv', index_col=0)
 df_emission = pd.read_csv('input_data/co2_emission_rates_data.csv', index_col=1)
+df_resource_mix = pd.read_csv('input_data/resourcesEnergyMix.csv', index_col=1)
+
+month_mapping = {1: 'January',2: 'February', 3: 'March',4: 'April',
+                5: 'May',6: 'June',7: 'July',8: 'August',
+                9: 'September',10: 'October',11: 'November',12: 'December'}
+
+# def get_e_total_price(state,homeType,df_price,df_load,month_mapping):
+#     hh_type = get_hh_abb(homeType)
+#     dict_states = get_mappings()
+#     climate_zone = dict_states[state][0]
+#     climate_zone_hometype = climate_zone + hh_type
+#     total_cost_ = round(df_price[state]*df_load[climate_zone_hometype]/100,2)
+#     df_total_cost = pd.DataFrame(total_cost_,columns=['Elec Costs'])
+#     df_total_cost = df_total_cost.rename(index=month_mapping)
+#     df_total_cost.to_csv('output_data/monthlyElecCost_'+state+'.csv')
+#     return(df_total_cost)
+
+
+# def get_e_total_emissions(state,homeType,df_emission,df_load,month_mapping):
+#     hh_type = get_hh_abb(homeType)
+#     dict_states = get_mappings()
+#     climate_zone = dict_states[state][0]
+#     climate_zone_hometype = climate_zone + hh_type
+#     total_emissions_ = round(df_emission.loc[state]['CO2e']*0.001*0.0005*df_load[climate_zone_hometype],2)
+#     total_emissions_.name = None
+#     df_total_emissions = pd.DataFrame(total_emissions_,columns=['Emission'])
+#     df_total_emissions = df_total_emissions.rename(index=month_mapping)
+#     df_total_emissions.to_csv('output_data/monthlyCO2.csv')
+#     return(df_total_emissions)
+
+def uses_mix(state,df_resource):
+    resources_list = ['Coal', 'Oil','Gas', 'Other Fossil', 'Nuclear', 'Hydro', 
+                      'Biomass', 'Wind', 'Solar','Geo- thermal', 'Other unknown/ purchased fuel']
+    
+    type_res_dict = {'Coal':'Fossil', 'Oil':'Fossil','Gas':'Fossil', 'Other Fossil':'Fossil', 'Nuclear':'Renewable', 'Hydro':'Renewable', 
+                      'Biomass':'Renewable', 'Wind':'Renewable', 'Solar':'Renewable','Geo- thermal':'Renewable', 'Other unknown/ purchased fuel':'Unknown'}
+
+    df_resource_mix = pd.DataFrame(df_resource.loc[state][resources_list])
+    df_resource_mix.rename(columns={state:'Proportion'},inplace=True)
+    df_resource_mix['Resource'] = df_resource_mix.index
+    df_resource_mix['Type'] = df_resource_mix['Resource'].apply(lambda x: type_res_dict[x])
+    df_resource_mix.reset_index(inplace=True)
+    df_resource_mix.to_csv('output_data/resourcesMIX_'+state+'.csv')
+    return(df_resource_mix)
 
 def get_statelist():
     states = pd.read_excel('input_data/state_climate_zone.xlsx')["state"]
@@ -81,7 +127,7 @@ def get_final(state, carModel, monthlyMileage, house,cons_level):
     emissions = df_emission.loc[state, 'CO2']*0.001*level #MWh to kWh
     df_monthly_em = pd.DataFrame({'co2_in':[emissions for i in range(12)]})
     df_monthly_em.index =range(1, len(df_monthly_em)+1)
-    
+
     # Get load
     df_avg_cz, df_ev_load = get_load(state, carModel, monthlyMileage, house)
 
@@ -98,10 +144,10 @@ def get_final(state, carModel, monthlyMileage, house,cons_level):
 
     df_final_price = df_all['Elec Costs']
     df_final_price.index = months
-    df_final_price.to_csv('output_data/monthlyElecCost.csv') 
+    df_final_price.to_csv('output_data/monthlyElecCost_'+state+'.csv') 
 
     df_final_em = df_all['Emission']
     df_final_em.index = months
-    df_final_em.to_csv('output_data/monthlyCO2.csv')
+    df_final_em.to_csv('output_data/monthlyCO2_'+state+'.csv')
     return 
 
