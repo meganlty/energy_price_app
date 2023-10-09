@@ -53,7 +53,7 @@ with st.container():
     
     #Select Energy Consciousness Level
     with tab3:
-        energySaverQuestion='<h4 style="font-size:22px;margin-bottom: 0;margin-top: 0; padding-bottom: 0px;">Do you intent to save energy?</h4>'
+        energySaverQuestion='<h4 style="font-size:22px;margin-bottom: 0;margin-top: 0; padding-bottom: 0px;">Do you intend to save energy?</h4>'
         st.markdown(energySaverQuestion, unsafe_allow_html=True)
         energySaver_select=st.radio(
             "e.g. I always turn lights off when leave",
@@ -144,7 +144,7 @@ if st.button("Calculate"):
 
     # Calculate the total CO2 emissions
     total_ems = chart_data['Emission'].sum()
-    st.write("Total CO2 Emission would be " + str(round(float(total_ems))))
+    st.write("Total CO2 Emission would be " + str(round(float(total_ems))) + " tons")
 
     # Calculate the average CO2 emissions
     average_ems = chart_data['Emission'].mean()

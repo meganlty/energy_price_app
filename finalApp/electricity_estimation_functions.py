@@ -6,13 +6,6 @@ Created on Wed Oct  4 21:22:27 2023
 """
 import pandas as pd
 
-#inputs #will be passed into by streamlit code
-#these are temporary inputs 
-state = 'TX'
-carModel = 'Tesla'
-monthlyMileage = 10 # in km
-house = 'Apartment (5+ units)  '
-
 df_price = pd.read_csv('input_data/monthly_avg_prices_bystate.csv', index_col=0)
 df_load = pd.read_csv('input_data/averages_per_climate_zone.csv', index_col=0)
 df_ev = pd.read_csv('input_data/energy_consumption_by_ev.csv', index_col=0)
@@ -20,11 +13,13 @@ df_emission = pd.read_csv('input_data/co2_emission_rates_data.csv', index_col=1)
 
 def get_statelist():
     states = pd.read_excel('input_data/state_climate_zone.xlsx')["state"]
+    states = list(set(states.tolist()))
     return states
 
 def get_mappings():
     cz_abbrev = {'Cold': 'c',
                  'Very Cold': 'vc',
+                 'Very-Cold': 'vc',
                  'Hot-Dry' : 'hd',
                  'Hot-Humid' :'hh', 
                  'Marine' : 'm', 
@@ -43,7 +38,7 @@ def get_hh_abb(hh_input):
     dict_hh_abbrev = {'House (Detached)':'sd', 
                  'House (Attached) e.g.: townhouse, rowhouse, duplex)' : 'sa', 
                  'Apartment (2-4 units)': 'm24',
-                 'Apartment (5+ units)  ': 'm5'}
+                 'Apartment (5+ units) ': 'm5'}
     hh_abbrev = dict_hh_abbrev[hh_input]
     return hh_abbrev
 
