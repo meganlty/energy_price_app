@@ -1,6 +1,8 @@
-#@author: sisazavi
+"""
+@author: sisazavi
 
-#https://www.epa.gov/egrid/summary-data
+Script that retrieves and cleans emission data from: https://www.epa.gov/egrid/summary-data
+"""
 
 import pandas as pd
 

@@ -159,7 +159,7 @@ if st.button("4️⃣ Calculate"):
     if comparison_needed:
         fig.update_layout(
         showlegend=True,
-        title='Electricity Costs EST by Month: '+state_dropdown + "vs. "+state_dropdown_2
+        title='Electricity Costs Estimation by Month: '+state_dropdown + " vs. "+state_dropdown_2
         )
 
     # Add data labels above each bar
@@ -190,15 +190,15 @@ if st.button("4️⃣ Calculate"):
     total_cost2 = chart_data2['Elec Costs'].sum()
 
     # Conclude the electric costs in two states
-    st.write("💰💰💰 Your total electric in {} costs would be ${}".format(state_dropdown, str(round(float(total_cost)))))
+    st.write("💰💰💰 Your total electricity cost estimate in {} is ${}".format(state_dropdown, str(round(float(total_cost)))))
     if comparison_needed:
         if total_cost > total_cost2:
-            st.write("💰💰💰 {}% greater than the costs in {}, where the costs are ${}"
+            st.write("💰💰💰 This is {}% greater than the costs in {}, where the costs are ${}"
                     .format(str(round(float(1 - total_cost2 / total_cost) * 100))
                             , state_dropdown_2
                             , str(round(float(total_cost2)))))
         else:
-            st.write("💰💰💰 {}% less than the costs in {}, where the costs are ${}"
+            st.write("💰💰💰 This is {}% less than the costs in {}, where the costs are ${}"
                     .format(str(round(float(1 - total_cost2 / total_cost) * 100))
                             , state_dropdown_2
                             , str(round(float(total_cost2)))))
@@ -259,7 +259,7 @@ if st.button("4️⃣ Calculate"):
     if comparison_needed:
         fig.update_layout(
         showlegend=True,
-        title='CO2 Emissions by Month: '+state_dropdown + "vs. "+state_dropdown_2
+        title='CO2 Emissions by Month: '+state_dropdown + " vs. "+state_dropdown_2
         )
         fig['data'][1]['marker']['color'] = [
             above_avg_color if em > average_ems else below_avg_color
@@ -277,15 +277,15 @@ if st.button("4️⃣ Calculate"):
     total_ems2 = chart_data2['Emission'].sum()
 
     # Conclude the CO2 emission in two states
-    st.write("🍃🍃🍃 Total CO2 Emission would be " + str(round(float(total_ems), 2)) + " tons")
+    st.write("🍃🍃🍃 Your total CO2 Emission would be " + str(round(float(total_ems), 2)) + " ton(s)")
     if comparison_needed:
         if total_ems > total_ems2:
-            st.write("🍃🍃🍃 {}% greater than the emissions in {}, where the emissions are {} tons"
+            st.write("🍃🍃🍃 This is {}% greater than the emissions in {}, where the emissions are {} ton(s)"
                     .format(str(round(float(1 - total_ems2 / total_ems) * 100, 2))
                             , state_dropdown_2
                             , str(round(float(total_ems2), 2))))
         else:
-            st.write("🍃🍃🍃 {}% less than the emissions in {}, where the emissions are {} tons"
+            st.write("🍃🍃🍃 This is {}% less than the emissions in {}, where the emissions are {} ton(s)"
                     .format(str(round(float(1 - total_ems / total_ems2) * 100, 2))
                             , state_dropdown_2
                             , str(round(float(total_ems2), 2))))
@@ -310,7 +310,7 @@ if st.button("4️⃣ Calculate"):
         fig.add_trace(go.Pie(labels=pie_data['Resource'], values=pie_data['Proportion'], name=state_dropdown + " CO2e"), 1, 1)
         fig.add_trace(go.Pie(labels=pie_data2['Resource'], values=pie_data2['Proportion'], name=state_dropdown_2 + " CO2e"), 1, 2)
         fig.update_layout(
-        title_text="Energy resource Mix",
+        title_text="Energy Resource Mix",
         # Add annotations in the center of the donut pies.
         annotations=[dict(text=state_dropdown, x=0.18, y=0.5, font_size=20, showarrow=False),
                      dict(text=state_dropdown_2, x=0.82, y=0.5, font_size=20, showarrow=False)])
@@ -326,15 +326,15 @@ if st.button("4️⃣ Calculate"):
     st.plotly_chart(fig)
 
     # Conclude the renewable recources weighs of two states
-    st.write("⚡⚡⚡ Renewable resources are the {}% of the total in {}".format(round(renewbableShare * 100, 2), state_dropdown))
+    st.write("⚡⚡⚡ Renewable resources generate {}% of the total electricity in {}".format(round(renewbableShare * 100, 2), state_dropdown))
     if comparison_needed:
         if renewbableShare > renewbableShare2:
-            st.write("⚡⚡⚡ {}% greener than the resources in {}, where the renewable resources are {}%"
+            st.write("⚡⚡⚡ This is {}% greener than the resources in {}, where the renewable resources are {}%"
                     .format(str(round(float(1 - renewbableShare2 / renewbableShare) * 100, 2))
                             , state_dropdown_2
                             , str(round(float(renewbableShare2 * 100), 2))))
         else:
-            st.write("⚡⚡⚡ {}% less greener than the emissions in {}, where the renewable resources are {}%"
+            st.write("⚡⚡⚡ This is {}% less greener than the emissions in {}, where the renewable resources are {}%"
                     .format(str(round(float(1 - renewbableShare / renewbableShare2) * 100, 2))
                             , state_dropdown_2
                             , str(round(float(renewbableShare2 * 100), 2))))

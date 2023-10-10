@@ -1,0 +1,12 @@
+,index,Proportion,Resource,Type
+0,Coal,0.752,Coal,Fossil
+1,Oil,0.003,Oil,Fossil
+2,Gas,0.079,Gas,Fossil
+3,Other Fossil,0.0,Other Fossil,Fossil
+4,Nuclear,0.056,Nuclear,Renewable
+5,Hydro,0.022,Hydro,Renewable
+6,Biomass,0.002,Biomass,Renewable
+7,Wind,0.085,Wind,Renewable
+8,Solar,0.002,Solar,Renewable
+9,Geo- thermal,0.0,Geo- thermal,Renewable
+10,Other unknown/ purchased fuel,0.0,Other unknown/ purchased fuel,Unknown

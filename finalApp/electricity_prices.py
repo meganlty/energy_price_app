@@ -1,5 +1,9 @@
-#@author: sisazavi
+"""
+@author: sisazavi
 
+Script that retrieves and cleans price data
+
+"""
 import requests
 import json
 import pandas as pd
