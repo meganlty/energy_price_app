@@ -42,7 +42,8 @@ with st.container():
     # Step 2: Select State to Compare
     compareStateQuestion = '<h3 style="font-size:22px;margin-bottom: 0;margin-top: 0; padding-bottom: 0px;">2️⃣   With which state would you like to compare?</h3>'
     st.markdown(compareStateQuestion, unsafe_allow_html=True)
-    state_dropdown_2 = st.selectbox(" ", statelist, key="state2", index=5)
+    statelist.append("-")
+    state_dropdown_2 = st.selectbox(" ",statelist, key="state2", index=len(statelist)-1)
 
     # Step 3: Tell us more about you (Tabs for Electric Car, Home Type, Energy Consciousness)
     detailedQuestionPrompt = '<h3 style="font-size:22px;margin-bottom: 0;margin-top: 0; padding-bottom: 0px;">3️⃣   Tell us more about you</h3>'
@@ -79,10 +80,15 @@ st.markdown("""---""")
 
 # Step 4: Calculate Button
 if st.button("4️⃣ Calculate"):
-    # Check if two input states are the same
-    if state_dropdown == state_dropdown_2:
-        st.write("Please select two different states")
-        exit()
+
+    # If user select None state to compare against, default this value to home state
+    if state_dropdown_2 =="-":
+        state_dropdown_2=state_dropdown
+    # Check if user want to do comparison
+    if state_dropdown ==state_dropdown_2:
+        comparison_needed=False
+    else:
+        comparison_needed=True
 
     # Display user's entered information
     userProfileHeader = '<h3 style="font-size:20px;">👾 Entered Information</h3>'
@@ -119,7 +125,11 @@ if st.button("4️⃣ Calculate"):
     chart_data2.rename(columns={'Unnamed: 0': 'Month'}, inplace=True)
     chart_data2['State'] = state_dropdown_2
 
-    chart_1_2 = pd.concat([chart_data, chart_data2], axis=0)
+    # Concatenate two group of data if comparison needed
+    if comparison_needed:
+        chart_1_2 = pd.concat([chart_data, chart_data2], axis=0)
+    else:    
+        chart_1_2 = chart_data
 
     # Define a custom sorting order for the months
     month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -141,10 +151,16 @@ if st.button("4️⃣ Calculate"):
     fig.update_layout(
         xaxis_title='Month',
         yaxis_title='Electric Costs',
-        showlegend=True,  # Hide legend
-        title=state_dropdown + " Vs. " + state_dropdown_2 + " Electricity Costs EST by Month"
+        showlegend=False,
+        title="Electricity Costs EST by Month: "+state_dropdown
     )
     fig.update_yaxes(range=[0, chart_1_2['Elec Costs'].max() * 1.1])
+
+    if comparison_needed:
+        fig.update_layout(
+        showlegend=True,
+        title='Electricity Costs EST by Month: '+state_dropdown + "vs. "+state_dropdown_2
+        )
 
     # Add data labels above each bar
     fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
@@ -175,16 +191,17 @@ if st.button("4️⃣ Calculate"):
 
     # Conclude the electric costs in two states
     st.write("💰💰💰 Your total electric in {} costs would be ${}".format(state_dropdown, str(round(float(total_cost)))))
-    if total_cost > total_cost2:
-        st.write("💰💰💰 {}% greater than the costs in {}, where the costs are ${}"
-                 .format(str(round(float(1 - total_cost2 / total_cost) * 100))
-                         , state_dropdown_2
-                         , str(round(float(total_cost2)))))
-    else:
-        st.write("💰💰💰 {}% less than the costs in {}, where the costs are ${}"
-                 .format(str(round(float(1 - total_cost2 / total_cost) * 100))
-                         , state_dropdown_2
-                         , str(round(float(total_cost2)))))
+    if comparison_needed:
+        if total_cost > total_cost2:
+            st.write("💰💰💰 {}% greater than the costs in {}, where the costs are ${}"
+                    .format(str(round(float(1 - total_cost2 / total_cost) * 100))
+                            , state_dropdown_2
+                            , str(round(float(total_cost2)))))
+        else:
+            st.write("💰💰💰 {}% less than the costs in {}, where the costs are ${}"
+                    .format(str(round(float(1 - total_cost2 / total_cost) * 100))
+                            , state_dropdown_2
+                            , str(round(float(total_cost2)))))
     st.markdown("""---""")
 
     # Emission chart
@@ -196,7 +213,12 @@ if st.button("4️⃣ Calculate"):
     chart_data2.rename(columns={'Unnamed: 0': 'Month'}, inplace=True)
     chart_data2['State'] = state_dropdown_2
 
-    chart_1_2 = pd.concat([chart_data, chart_data2], axis=0)
+    # Concatenate two group of data if comparison needed
+    if comparison_needed:
+        chart_1_2 = pd.concat([chart_data, chart_data2], axis=0)
+    else:    
+        chart_1_2 = chart_data
+    
 
     # Calculate the average CO2 emissions
     average_ems = chart_data['Emission'].mean()
@@ -220,8 +242,8 @@ if st.button("4️⃣ Calculate"):
     fig.update_layout(
         xaxis_title='Month',
         yaxis_title='CO2 Emissions in tons',
-        showlegend=True,  # Hide legend
-        title=state_dropdown + " Vs. " + state_dropdown_2 + ' CO2 Emissions by Month'
+        showlegend=False,
+        title='CO2 Emissions by Month: '+state_dropdown
     )
     fig.update_yaxes(range=[0, chart_1_2['Emission'].max() * 1.1])
 
@@ -234,15 +256,20 @@ if st.button("4️⃣ Calculate"):
         above_avg_color if em > average_ems else below_avg_color
         for em in chart_1_2['Emission']
     ]
-    fig['data'][1]['marker']['color'] = [
-        above_avg_color if em > average_ems else below_avg_color
-        for em in chart_1_2['Emission']
-    ]
+    if comparison_needed:
+        fig.update_layout(
+        showlegend=True,
+        title='CO2 Emissions by Month: '+state_dropdown + "vs. "+state_dropdown_2
+        )
+        fig['data'][1]['marker']['color'] = [
+            above_avg_color if em > average_ems else below_avg_color
+            for em in chart_1_2['Emission']
+        ]
 
     # Add data labels above each bar
     fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
 
-    # Show the chart using Streamlit
+    # Show the chart using plotly
     st.plotly_chart(fig)
 
     # Calculate the total CO2 emissions
@@ -251,16 +278,17 @@ if st.button("4️⃣ Calculate"):
 
     # Conclude the CO2 emission in two states
     st.write("🍃🍃🍃 Total CO2 Emission would be " + str(round(float(total_ems), 2)) + " tons")
-    if total_ems > total_ems2:
-        st.write("🍃🍃🍃 {}% greater than the emissions in {}, where the emissions are {} tons"
-                 .format(str(round(float(1 - total_ems2 / total_ems) * 100, 2))
-                         , state_dropdown_2
-                         , str(round(float(total_ems2), 2))))
-    else:
-        st.write("🍃🍃🍃 {}% less than the emissions in {}, where the emissions are {} tons"
-                 .format(str(round(float(1 - total_ems / total_ems2) * 100, 2))
-                         , state_dropdown_2
-                         , str(round(float(total_ems2), 2))))
+    if comparison_needed:
+        if total_ems > total_ems2:
+            st.write("🍃🍃🍃 {}% greater than the emissions in {}, where the emissions are {} tons"
+                    .format(str(round(float(1 - total_ems2 / total_ems) * 100, 2))
+                            , state_dropdown_2
+                            , str(round(float(total_ems2), 2))))
+        else:
+            st.write("🍃🍃🍃 {}% less than the emissions in {}, where the emissions are {} tons"
+                    .format(str(round(float(1 - total_ems / total_ems2) * 100, 2))
+                            , state_dropdown_2
+                            , str(round(float(total_ems2), 2))))
     st.markdown("""---""")
 
     # Resources pie chart
@@ -278,34 +306,38 @@ if st.button("4️⃣ Calculate"):
 
     # Create subplots: use 'domain' type for Pie subplot
     fig = make_subplots(rows=1, cols=2, specs=[[{'type': 'domain'}, {'type': 'domain'}]])
-    fig.add_trace(go.Pie(labels=pie_data['Resource'], values=pie_data['Proportion'], name=state_dropdown + " CO2e"), 1, 1)
-    fig.add_trace(go.Pie(labels=pie_data2['Resource'], values=pie_data2['Proportion'], name=state_dropdown_2 + " CO2e"), 1, 2)
-
-    # Use `hole` to create a donut-like pie chart
-    fig.update_traces(hole=.4, hoverinfo="label+percent+name")
-
-    fig.update_layout(
-        title_text=state_dropdown + " Vs. " + state_dropdown_2 + " Energy resource Mix",
+    if comparison_needed:
+        fig.add_trace(go.Pie(labels=pie_data['Resource'], values=pie_data['Proportion'], name=state_dropdown + " CO2e"), 1, 1)
+        fig.add_trace(go.Pie(labels=pie_data2['Resource'], values=pie_data2['Proportion'], name=state_dropdown_2 + " CO2e"), 1, 2)
+        fig.update_layout(
+        title_text="Energy resource Mix",
         # Add annotations in the center of the donut pies.
         annotations=[dict(text=state_dropdown, x=0.18, y=0.5, font_size=20, showarrow=False),
                      dict(text=state_dropdown_2, x=0.82, y=0.5, font_size=20, showarrow=False)])
+    else:
+        fig.add_trace(go.Pie(labels=pie_data['Resource'], values=pie_data['Proportion'], name=state_dropdown + " CO2e"))
+        fig.update_layout(title_text="Energy Resource Mix:" + state_dropdown,)
+    # Use `hole` to create a donut-like pie chart
+    fig.update_traces(hole=.4, hoverinfo="label+percent+name")
+
+    
 
     # Show the chart using Streamlit
     st.plotly_chart(fig)
 
     # Conclude the renewable recources weighs of two states
     st.write("⚡⚡⚡ Renewable resources are the {}% of the total in {}".format(round(renewbableShare * 100, 2), state_dropdown))
-    if renewbableShare > renewbableShare2:
-        st.write("⚡⚡⚡ {}% greener than the resources in {}, where the renewable resources are {}%"
-                 .format(str(round(float(1 - renewbableShare2 / renewbableShare) * 100, 2))
-                         , state_dropdown_2
-                         , str(round(float(renewbableShare2 * 100), 2))))
-    else:
-        st.write("⚡⚡⚡ {}% less greener than the emissions in {}, where the renewable resources are {}%"
-                 .format(str(round(float(1 - renewbableShare / renewbableShare2) * 100, 2))
-                         , state_dropdown_2
-                         , str(round(float(renewbableShare2 * 100), 2))))
-
+    if comparison_needed:
+        if renewbableShare > renewbableShare2:
+            st.write("⚡⚡⚡ {}% greener than the resources in {}, where the renewable resources are {}%"
+                    .format(str(round(float(1 - renewbableShare2 / renewbableShare) * 100, 2))
+                            , state_dropdown_2
+                            , str(round(float(renewbableShare2 * 100), 2))))
+        else:
+            st.write("⚡⚡⚡ {}% less greener than the emissions in {}, where the renewable resources are {}%"
+                    .format(str(round(float(1 - renewbableShare / renewbableShare2) * 100, 2))
+                            , state_dropdown_2
+                            , str(round(float(renewbableShare2 * 100), 2))))
 st.markdown("""---""")
 
 # Update data from webscraping and API
