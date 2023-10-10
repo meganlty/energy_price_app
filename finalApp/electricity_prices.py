@@ -38,7 +38,7 @@ def get_eia_prices():
 
     response = requests.get(url, headers={'Content-Type': 'application/json'})
     if response.status_code == 200:
-        print('\nSuccesfully conected to https://api.eia.gov/\n')
+        print('\nSuccesfully connected to https://api.eia.gov/\n')
         try:
             data_temp1 = json.loads(response.content.decode('utf-8'))
             data_temp2 = data_temp1['response']['data']
