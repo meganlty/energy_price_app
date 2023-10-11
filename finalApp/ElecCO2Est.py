@@ -199,7 +199,7 @@ if st.button("4️⃣ Calculate"):
                             , str(round(float(total_cost2)))))
         else:
             st.write("💰💰💰 This is {}% less than the costs in {}, where the costs are ${}"
-                    .format(str(round(float(1 - total_cost2 / total_cost) * 100))
+                    .format(str(round(float(1 - total_cost / total_cost2) * 100))
                             , state_dropdown_2
                             , str(round(float(total_cost2)))))
     st.markdown("""---""")
