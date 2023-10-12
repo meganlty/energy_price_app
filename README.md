@@ -31,6 +31,7 @@ Open Terminal/equivalent and run the following:
 ```bash
 streamlit run ElecCO2Est.py
 ```
+Ensure that you navigate to the finalApp folder before doing so. 
 
 ## Contributing
 
