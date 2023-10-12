@@ -1,7 +1,11 @@
 """
+Created on Oct 2023
+
 @author: sisazavi
 
-Script that retrieves and cleans price data
+This function essentially retrieves electricity price (Cents per Kilowatthour) from the EIA API, 
+cleans it, and saves it as a CSV file for further analysis or use. It is designed to work with all US 
+states for the residential sector.
 
 """
 import requests
@@ -39,7 +43,8 @@ def get_eia_prices():
     =WY&start=2010-01&sort[0][column]=period&sort[0][direction]\
     =desc&api_key="""+key
 
-
+    #If the API request is successful, it processes the JSON data received. It extracts relevant data,
+    #  such as period, stateid, sectorName, and price.
     response = requests.get(url, headers={'Content-Type': 'application/json'})
     if response.status_code == 200:
         print('\nSuccesfully connected to https://api.eia.gov/\n')
@@ -55,20 +60,6 @@ def get_eia_prices():
         except:
             print('\nNo data found\n')
 
-    # print(df_price.head())
-    # print('')
-    # print(df_price.describe())
-    # print('')
-    # print(df_price['sectorName'].unique())
-    # print('')
-    # print(df_price['sectorid'].unique())
-    # print('')
-    # print(df_price['stateDescription'].unique())
-    # print('')
-    # print(df_price['period'].unique())
-
-    # print(df_price.head().to_string)
-
     #get the the prices for the residential sector
     df_price_res = df_price[df_price['sectorName'] == 'residential']
 
@@ -79,15 +70,13 @@ def get_eia_prices():
                 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'PA', 'RI', \
                 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', \
                 'WV', 'WI', 'WY'])
-        
-    df_price_res = df_price_res[df_price_res['stateid'].apply(lambda x: x in states)]
-    # print(df_price_res)
 
+
+    df_price_res = df_price_res[df_price_res['stateid'].apply(lambda x: x in states)]
     df_price_res['month'] = pd.to_datetime(df_price_res['period']).dt.month
     df_price_pivot = pd.pivot_table(df_price_res, values = 'price', index = 'month', 
                                     columns = 'stateid', aggfunc = 'mean') 
 
-    # print(df_price_pivot)
     #export csv to input_data directory
     # prices in (Cents per Kilowatthour)
     df_price_pivot.to_csv('input_data/monthly_avg_prices_bystate.csv')

@@ -1,3 +1,14 @@
+"""
+Created on Oct 2023
+
+@authors: yangche3, meganty and sisazavi
+
+This script essentially creates a user-friendly web application for estimating electricity
+consumption costs and CO2 emissions, allowing users to input their details, compare results
+between two states and visualize the data interactively.
+
+"""
+
 # Import necessary libraries
 import streamlit as st
 import pandas as pd

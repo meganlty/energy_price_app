@@ -10,35 +10,6 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-#df_resource_mix = pd.read_csv('input_data/resourcesEnergyMix.csv', index_col=1)
-
-# month_mapping = {1: 'January',2: 'February', 3: 'March',4: 'April',
-#                 5: 'May',6: 'June',7: 'July',8: 'August',
-#                 9: 'September',10: 'October',11: 'November',12: 'December'}
-
-# def get_e_total_price(state,homeType,df_price,df_load,month_mapping):
-#     hh_type = get_hh_abb(homeType)
-#     dict_states = get_mappings()
-#     climate_zone = dict_states[state][0]
-#     climate_zone_hometype = climate_zone + hh_type
-#     total_cost_ = round(df_price[state]*df_load[climate_zone_hometype]/100,2)
-#     df_total_cost = pd.DataFrame(total_cost_,columns=['Elec Costs'])
-#     df_total_cost = df_total_cost.rename(index=month_mapping)
-#     df_total_cost.to_csv('output_data/monthlyElecCost_'+state+'.csv')
-#     return(df_total_cost)
-
-
-# def get_e_total_emissions(state,homeType,df_emission,df_load,month_mapping):
-#     hh_type = get_hh_abb(homeType)
-#     dict_states = get_mappings()
-#     climate_zone = dict_states[state][0]
-#     climate_zone_hometype = climate_zone + hh_type
-#     total_emissions_ = round(df_emission.loc[state]['CO2e']*0.001*0.0005*df_load[climate_zone_hometype],2)
-#     total_emissions_.name = None
-#     df_total_emissions = pd.DataFrame(total_emissions_,columns=['Emission'])
-#     df_total_emissions = df_total_emissions.rename(index=month_mapping)
-#     df_total_emissions.to_csv('output_data/monthlyCO2.csv')
-#     return(df_total_emissions)
 
 def uses_mix(state, df_resource):
     """
