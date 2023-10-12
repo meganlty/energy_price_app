@@ -76,6 +76,8 @@ def get_statelist():
     Returns list of states (no duplicates). Used for
     drop-down selection of state in Streamlit app. 
     
+    State list and climate zone mappins from here: https://www.osti.gov/servlets/purl/1893981
+    
     Returns
     -------
     states : List 

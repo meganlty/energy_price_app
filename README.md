@@ -1,6 +1,6 @@
-# energy_price_app
+# ElectriWise
 
-ElectriWise: Power & Planet is a web application designed to provide users with insights on their monthly electricity bills and environmental impact. 
+ElectriWise is a web application designed to provide users with insights on their monthly electricity bills and environmental impact. 
 
 ## Installation
 
@@ -25,19 +25,11 @@ Install the required packages from requirements.txt
 pip install -r requirements.txt
 ```
 
-## Usage
+## Running the App
 
-```python
-import foobar
-
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
+Open Terminal/equivalent and run the following: 
+```bash
+streamlit run ElecCO2Est.py
 ```
 
 ## Contributing
@@ -48,4 +40,7 @@ to discuss what you would like to change.
 ## License
 
 Carnegie Mellon University - Heinz College 
-Megan Ty (mlty@andrew.cmu.edu), Simon Isaza-Villegas (sisazavi@andrew.cmu.edu), Yang Chen (yangche3@andrew.cmu.edu)
+
+- Megan Ty (mlty@andrew.cmu.edu)
+- Simon Isaza-Villegas (sisazavi@andrew.cmu.edu)
+- Yang Chen (yangche3@andrew.cmu.edu)
